@@ -20,8 +20,13 @@
 
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
 //
-// const fs = require('fs');
+require('dotenv').config();
+const HDWalletProvider = require("truffle-hdwallet-provider");
+
+// const mnemonic = process.env.MNEMONIC;
+const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
+const secrets = JSON.parse(fs.readFileSync(".secrets.json").toString().trim());
 
 module.exports = {
   /**
@@ -70,7 +75,30 @@ module.exports = {
     // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
-    // }
+    // }https://rinkeby.infura.io/v3/a896a74ef7d14f61b3b0e472a69268bf
+    rinkeby: {
+      networkCheckTimeout: 20000,
+      provider: function () {
+        return new HDWalletProvider(secrets.mnemonic, secrets.rinkeby)
+      },
+      network_id: 4
+    },
+    mainnet: {
+      provider: function () {
+        return new HDWalletProvider(mnemonic, "https://mainnet.infura.io/v3/YOUR_TOKEN")
+      },
+      network_id: "1"
+    },
+    kovan: {
+      networkCheckTimeout: 20000,
+      provider: () => {
+        return new HDWalletProvider(
+          secrets.mnemonic,
+          secrets.kovan,
+        );
+      },
+      network_id: "42",
+    },
   },
 
   // Set default mocha options here, use special reporters etc.
@@ -104,13 +132,13 @@ module.exports = {
   // $ truffle migrate --reset --compile-all
   //
   // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
+  // enabled: false,
+  // host: "127.0.0.1",
+  // adapter: {
+  //   name: "sqlite",
+  //   settings: {
+  //     directory: ".db"
+  //   }
+  // }
   // }
 };
